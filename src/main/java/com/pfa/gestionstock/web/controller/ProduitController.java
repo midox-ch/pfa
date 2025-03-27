@@ -3,6 +3,7 @@ package com.pfa.gestionstock.web.controller;
 import com.pfa.gestionstock.entities.Produit;
 import com.pfa.gestionstock.service.ProduitService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,10 +18,10 @@ public class ProduitController {
     private ProduitService produitService;
 
     // Créer un produit
-    @PostMapping
+   /*  @PostMapping
     public Produit createProduit(@RequestBody Produit produit) {
         return produitService.createProduit(produit);
-    }
+    }*/
 
     // Récupérer tous les produits
     @GetMapping
@@ -47,6 +48,19 @@ public class ProduitController {
     public ResponseEntity<Void> deleteProduit(@PathVariable Long id) {
         produitService.deleteProduit(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping
+    public ResponseEntity<Produit> ajouterProduitAvecStock(
+            @RequestBody ProduitRequest request) {
+        Produit produit = produitService.creerProduitEtStock(
+            request.getNom(), 
+            request.getCategorie(), 
+            request.getPrix(), 
+            request.getEntrepotId(), 
+            request.getQuantite() // Utilisation du champ renommé
+        );
+        return ResponseEntity.status(HttpStatus.CREATED).body(produit);
     }
 
     /*  Récupérer des produits par catégorie

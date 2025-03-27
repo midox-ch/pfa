@@ -84,4 +84,11 @@ public class Produit {
     public void setImage(String image) {
         this.image = image;
     }
+    @OneToOne(mappedBy = "produit", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Stock stock; // Relation bidirectionnelle
+
+    public void setStock(Stock stock) {
+        this.stock = stock;
+        stock.setProduit(this); // Maintenir la relation bidirectionnelle
+    }
 }

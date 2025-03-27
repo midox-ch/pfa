@@ -72,6 +72,15 @@
             text-decoration: none;
             transition: background-color 0.3s;
         }
+        .nav-item1 {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 1px 12px;
+            color: white;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
         
         .nav-item:hover {
             background-color: rgba(255, 255, 255, 0.1);
@@ -176,7 +185,7 @@
         .container {
             display: flex;
             gap: 20px;
-            max-width: 1200px;
+            flex-grow: 1;
             margin: 0;
         }
         
@@ -195,6 +204,7 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             flex-grow: 1;
         }
+        
         
         .form-group {
             margin-bottom: 15px;
@@ -260,3 +270,45 @@
         .action-btn:hover {
             text-decoration: underline;
         }
+        .header {
+            background-color: #2D3A5A;
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+        
+        .header h2 {
+            margin: 0;
+            font-size: 18px;
+        }
+        .filters {
+            background-color: #f8f4f9;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .filter-buttons {
+            display: flex ;
+            gap: 10px;
+        }
+        
+        .filter-btn {
+            background-color: #2D3A5A;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            opacity: 0.6;
+        }
+        
+        .filter-btn.active {
+            opacity: 1;
+        }
+        
