@@ -1,51 +1,123 @@
-// Fonction pour ajouter un article au tableau
+// Fonction pour ajouter un produit à la table HTML
 function ajouterArticle(article) {
     const tableBody = document.getElementById('table-body');
     const row = document.createElement('tr');
-    
+
     row.innerHTML = `
-        <td>${article.ID}</td>
+        <td>${article.id}</td>
         <td>${article.nom}</td>
         <td>${article.categorie}</td>
         <td>${article.quantite}</td>
-        <td>${article.prix}</td>
-        <td><a href="#" class="action-btn">✎</a></td>
+        <td>${article.prix} €</td>
+        <td>
+            <button class="edit-btn" onclick="modifierArticle(${article.id})">✎</button>
+            <button class="delete-btn" onclick="supprimerArticle(${article.id})">🗑</button>
+        </td>
     `;
-    
+
     tableBody.appendChild(row);
 }
+function modifierArticle(id) {
+    fetch(`http://localhost:8083/api/produits/${id}`)
+    .then(response => response.json())
+    .then(produit => {
+        document.getElementById('ID').value = produit.id;
+        document.getElementById('nom').value = produit.nom;
+        document.getElementById('categorie').value = produit.categorie;
+        document.getElementById('quantite').value = produit.quantite;
+        document.getElementById('prix').value = produit.prix;
 
-// Initialiser le tableau avec les données initiales
-window.onload = function() {
-    const tableBody = document.getElementById('table-body');
-    tableBody.innerHTML = ""; // Effacer d'abord le contenu
-    
-    articlesInitiaux.forEach(article => {
-        ajouterArticle(article);
-    });
+        // Changer le bouton pour indiquer qu'on modifie
+        const bouton = document.getElementById('ajouter');
+        bouton.innerText = "Modifier";
+        bouton.onclick = function () {
+            enregistrerModification(produit.id);
+        };
+    })
+    .catch(error => console.error("Erreur lors du chargement du produit :", error));
+}
+function enregistrerModification(id) {
+    const produitModifie = {
+        id: id,
+        nom: document.getElementById('nom').value,
+        categorie: document.getElementById('categorie').value,
+        quantite: parseInt(document.getElementById('quantite').value),
+        prix: parseFloat(document.getElementById('prix').value)
+    };
+
+    fetch(`http://localhost:8083/api/produits/${id}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(produitModifie)
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert("Produit modifié avec succès !");
+        location.reload(); // Recharger la page pour voir les changements
+    })
+    .catch(error => console.error("Erreur lors de la modification du produit :", error));
 }
 
-document.getElementById('ajouter').addEventListener('click', function() {
+function supprimerArticle(id) {
+    if (confirm("Voulez-vous vraiment supprimer ce produit ?")) {
+        fetch(`http://localhost:8083/api/produits/${id}`, {
+            method: "DELETE"
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Erreur lors de la suppression du produit.");
+            }
+            alert("Produit supprimé avec succès !");
+            location.reload();
+        })
+        .catch(error => console.error("Erreur lors de la suppression du produit :", error));
+    }
+}
+
+// Fonction pour ajouter un stock à la table HTML
+function ajouterStock(stock) {
+    const stockTable = document.getElementById('stock-table-body');
+    const row = document.createElement('tr');
+
+    row.innerHTML = `
+        <td>${stock.produit.nom}</td>
+        <td>${stock.entrepot.nom}</td>
+        <td>${stock.quantite}</td>
+    `;
+
+    stockTable.appendChild(row);
+}
+
+// Initialisation du tableau au chargement de la page
+window.onload = function () {
+    document.getElementById('table-body').innerHTML = ""; // Nettoyage du tableau
+};
+
+// Écouteur pour l'ajout d'un produit
+document.getElementById('ajouter').addEventListener('click', function () {
     const nom = document.getElementById('nom').value;
     const categorie = document.getElementById('categorie').value;
     const quantite = parseInt(document.getElementById('quantite').value);
-    const prix = parseInt(document.getElementById('prix').value);
+    const prix = parseFloat(document.getElementById('prix').value);
 
-    // Validation
+    // Vérification des champs
     if (!nom || !categorie || isNaN(quantite) || isNaN(prix)) {
         alert('Veuillez remplir tous les champs correctement.');
         return;
     }
-    
-    // Création de l'objet article
+
+    // Création d'un objet produit
     const nouvelArticle = {
         nom: nom,
         categorie: categorie,
         quantite: quantite,
-        prix: prix,
+        prix: prix
     };
-     // Envoyer les données au backend
-     fetch("http://localhost:8083/api/produits", {
+
+    // Envoi au backend pour ajouter le produit
+    fetch("http://localhost:8083/api/produits", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -60,40 +132,44 @@ document.getElementById('ajouter').addEventListener('click', function() {
     })
     .then(data => {
         console.log("Produit ajouté avec succès:", data);
-        ajouterArticle(data); // Ajouter l'article retourné par le backend à la table
+        ajouterArticle(data); // Afficher le produit dans la table
+
+        // Ajout du stock pour ce produit
+        const entrepotId = 1; // Assurez-vous que l'ID de l'entrepôt est valide
+
+        console.log("Ajout du stock avec entrepotId:", entrepotId, "produitId:", data.id);
+        
+        return fetch("http://localhost:8083/api/stocks", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                entrepotId: entrepotId,
+                produitId: data.id,
+                quantite: data.quantite
+            })
+        });
     })
-    .catch(error => console.error("Erreur:", error));
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("Erreur lors de l'ajout du stock");
+        }
+        return response.json();
+    })
+    .then(stock => {
+        console.log("Stock mis à jour:", stock);
+        ajouterStock(stock);
+    })
+    .catch(error => {
+        console.error("Erreur:", error);
+        
+    });
 
-    // Fonction pour charger le stock mis à jour
-    function chargerStock() {
-        fetch("http://localhost:8083/api/produits/stock")
-        .then(response => response.json())
-        .then(data => {
-            let tableBody = document.getElementById("table-body");
-            tableBody.innerHTML = "";
-    
-            data.forEach(stock => {
-                let row = `<tr>
-                    <td>${stock.id}</td>
-                    <td>${stock.produitNom}</td>
-                    <td>${stock.categorie}</td>
-                    <td>${stock.quantiteTotale}</td>
-                    <td>${stock.prix}</td>
-                    <td><button onclick="supprimerProduit(${stock.id})">Supprimer</button></td>
-                </tr>`;
-                tableBody.innerHTML += row;
-            });
-        })
-        .catch(error => console.error("Erreur lors du chargement du stock:", error));
-    }
-
-    
-    // Ajouter au tableau
-    ajouterArticle(nouvelArticle);
-    
-    // Réinitialiser le formulaire
-    document.getElementById('ID').value = '';
+    // Réinitialisation du formulaire
     document.getElementById('nom').value = '';
+    document.getElementById('categorie').value = '';
     document.getElementById('quantite').value = '1';
     document.getElementById('prix').value = '';
 });
+

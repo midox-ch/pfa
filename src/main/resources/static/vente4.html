@@ -59,20 +59,46 @@
                 <button class="filter-btn active">point e vente 4</button>
             </div>
         </div>
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nom article</th>
-                    <th>Catégorie</th>
-                    <th>Quantité</th>
-                    <th>Prix unitaire</th>
-                </tr>
-            </thead>
-            <tbody id="table-body">
-                <!-- Articles seront ajoutés ici -->
-            </tbody>
-        </table>
+        <div class="container">
+            <div class="form-container">
+                <div class="form-group">
+                    <label for="nom">ID</label>
+                    <input type="text" id="ID" placeholder="54364512">
+                </div>
+                <div class="form-group">
+                    <label for="nom">ID entrepot</label>
+                    <input type="text" id="ID-entrepot" placeholder="8558455">
+                </div>
+                <div class="form-group">
+                    <label for="nom">Nom de l'article</label>
+                    <input type="text" id="nom" placeholder="HP">
+                </div>
+                
+                
+                <div class="form-group">
+                    <label for="quantite">Quantité</label>
+                    <input type="number" id="quantite" min="1" value="1">
+                </div>
+    
+                <button id="ajouter">Valider</button>
+            </div>
+            
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>ID entrepot</th>
+                            <th>Nom article</th>
+                            <th>Quantité</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body">
+                        <!-- Articles seront ajoutés ici -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
     <!-- Font Awesome Icons -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
