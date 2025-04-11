@@ -9,13 +9,17 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/stocks")
-public class StockController {
-    @Autowired
+public class StockController {@Autowired
     private StockService stockService;
 
     @PostMapping
     public Stock ajouterStock(@RequestBody Stock stock) {
         return stockService.ajouterStock(stock);
+    }
+
+    @GetMapping
+    public List<Stock> getAllStocks() {
+        return stockService.getAllStocks();
     }
 
     @PutMapping("/{id}")
