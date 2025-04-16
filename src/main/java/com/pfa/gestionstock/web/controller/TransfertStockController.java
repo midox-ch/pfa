@@ -1,7 +1,12 @@
 package com.pfa.gestionstock.web.controller;
 
 import com.pfa.gestionstock.dto.TransfertRequest;
+import com.pfa.gestionstock.entities.TransfertStock;
+import com.pfa.gestionstock.repository.TransfertStockRepository;
 import com.pfa.gestionstock.service.TransfertStockService;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,8 +14,21 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/transfert")
 public class TransfertStockController {
 
+    private final TransfertStockRepository transfertStockRepository;
+
     @Autowired
     private TransfertStockService transfertStockService;
+
+
+    TransfertStockController(TransfertStockRepository transfertStockRepository) {
+        this.transfertStockRepository = transfertStockRepository;
+    }
+
+
+    @GetMapping
+    public List<TransfertStock> getAllTransferts() {
+        return transfertStockRepository.findAll();
+    }
 
     @PostMapping("/entrepot-to-pdv")
     public String transfertStock(@RequestParam Long produitId,
