@@ -17,9 +17,17 @@ document.getElementById('login-form').addEventListener('submit', function(event)
         }
         return response.json();
     })
-    .then(data => {
-        console.log('Connexion réussie:', data);
-        window.location.href = 'home.html'; // Redirige vers ton tableau de bord
+    .then(utilisateur => {
+        console.log('Connexion réussie:', utilisateur);
+
+        // 🔀 Redirection selon le rôle
+        if (utilisateur.role === "ADMIN_ENTREPOT") {
+            window.location.href = "home.html";
+        } else if (utilisateur.role === "RESPONSABLE_POINT_DE_VENTE") {
+            window.location.href = "point_de_vente.html";
+        } else {
+            document.getElementById('error-message').textContent = "Rôle inconnu.";
+        }
     })
     .catch(error => {
         document.getElementById('error-message').textContent = error.message;
